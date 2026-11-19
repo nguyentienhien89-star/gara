@@ -24,7 +24,7 @@ FOLDER = r"/home/it/Gara"   # Thư mục cần đồng bộ
 #REPO_URL = "https://github.com/username/ten-repo.git"  # Link repo GitHub
 REPO_URL = "https://github.com/nguyentienhien89-star/gara.git"  # Link repo GitHub
 BRANCH = "main"                                        # Nhánh để push
-INTERVAL_MINUTES = 30                                  # Chu kỳ cập nhật (phút)
+INTERVAL_MINUTES = 10                                  # Chu kỳ cập nhật (phút)
 TOKEN = os.environ.get("GITHUB_TOKEN", "")             # Hoặc dán thẳng token vào đây
 # =======================================================
 
