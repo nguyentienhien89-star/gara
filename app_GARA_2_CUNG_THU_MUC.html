@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Báo cáo công nợ - Garage PRO</title>
+<style>
+:root{--bg:#f4f6fa;--card:#fff;--tx:#1d2433;--mu:#6b7589;--bd:#e3e7ef;--pr:#2563eb;--dg:#dc2626;--wn:#d97706;--ok:#16a34a;--hd:#eef2fa}
+@media(prefers-color-scheme:dark){:root{--bg:#10141c;--card:#1a202c;--tx:#e8ecf4;--mu:#97a2b8;--bd:#2b3445;--pr:#60a5fa;--dg:#f87171;--wn:#fbbf24;--ok:#4ade80;--hd:#222b3b}}
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.45 "Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--tx)}
+header{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--card);border-bottom:1px solid var(--bd)}
+h1{font-size:18px;margin:0}
+.sub{color:var(--mu);font-size:12px}
+button,.btn{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:7px 14px;border-radius:8px;cursor:pointer}
+button.p,.btn.p{background:var(--pr);border-color:var(--pr);color:#fff}
+main{max-width:1200px;margin:0 auto;padding:16px}
+#drop{border:2px dashed var(--bd);border-radius:14px;padding:50px 20px;text-align:center;background:var(--card);color:var(--mu)}
+#drop.over{border-color:var(--pr)}
+#drop b{display:block;font-size:16px;color:var(--tx);margin-bottom:6px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px}
+.c small{color:var(--mu)}
+.c div{font-size:22px;font-weight:700;margin-top:2px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.bar input,.bar select{font:inherit;padding:7px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx)}
+.bar input[type=search]{flex:1;min-width:180px}
+.tw{background:var(--card);border:1px solid var(--bd);border-radius:12px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:720px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap}
+th{background:var(--hd);font-size:12px;text-transform:uppercase;letter-spacing:.3px;cursor:pointer;user-select:none;position:sticky;top:0}
+td.n,th.n{text-align:right}
+tr.cu{cursor:pointer}
+tr.cu:hover{background:var(--hd)}
+tr.sub td{background:var(--hd);font-size:13px;color:var(--mu)}
+.debt{color:var(--dg);font-weight:700}
+.tag{padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600}
+.t1{background:#16a34a22;color:var(--ok)}.t2{background:#d9770622;color:var(--wn)}.t3{background:#dc262622;color:var(--dg)}
+tfoot td{font-weight:700;background:var(--hd)}
+.err{background:#dc262615;color:var(--dg);padding:10px 14px;border-radius:8px;margin-bottom:12px}
+.tabs{display:flex;gap:6px;margin-bottom:14px}
+.tabs button{padding:8px 18px;font-weight:600}
+.tabs button.on{background:var(--pr);border-color:var(--pr);color:#fff}
+.thu{color:var(--ok);font-weight:600}.chi{color:var(--dg);font-weight:600}
+tr.x td{text-decoration:line-through;color:var(--mu)}
+tr.op td{background:var(--hd);font-style:italic}
+td.w{white-space:normal;min-width:180px}
+.bar label{display:flex;align-items:center;gap:6px;color:var(--mu)}
+.chart{display:flex;align-items:stretch;gap:4px;height:180px;padding:12px 12px 4px;background:var(--card);border:1px solid var(--bd);border-radius:12px;margin-bottom:14px;overflow-x:auto}
+.col{flex:1 0 26px;max-width:70px;display:flex;flex-direction:column;align-items:center;font-size:10px;color:var(--mu)}
+.col .pos,.col .neg{width:100%;display:flex;flex-direction:column;justify-content:flex-end;flex:1}
+.col .neg{justify-content:flex-start}
+.col i{display:block;width:70%;margin:0 auto;border-radius:3px 3px 0 0}
+.col .pos i{background:var(--ok)}.col .neg i{background:var(--dg);border-radius:0 0 3px 3px}
+.col span{white-space:nowrap;margin-top:2px}
+.hide{display:none!important}
+.mo{display:none}
+.tabs{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tabs button{white-space:nowrap}
+@media(max-width:640px){
+  body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+  header{padding:10px 12px;position:sticky;top:0;z-index:5}
+  h1{font-size:16px}
+  main{padding:10px}
+  #drop{padding:36px 14px}
+  .cards{grid-template-columns:repeat(2,1fr);gap:8px}
+  .c{padding:10px}.c div{font-size:17px;word-break:break-word}
+  .bar input,.bar select,button,.btn{font-size:16px}
+  .bar>*{flex:1 1 100%}
+  .bar label{justify-content:space-between}.bar label input{flex:1}
+  .mo{display:block}
+  .tw{background:none;border:0;overflow:visible}
+  table,tbody,tfoot{display:block;min-width:0}
+  thead,tr.mh{display:none}
+  tr{display:block;background:var(--card);border:1px solid var(--bd);border-radius:12px;margin-bottom:8px;padding:6px 0}
+  td{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:3px 12px;border:0;white-space:normal;text-align:right}
+  td::before{content:attr(data-label);color:var(--mu);font-size:12px;text-align:left;flex:none}
+  td[data-label=""]{justify-content:flex-start;font-size:15px;text-align:left}
+  td[data-label=""]::before{display:none}
+  td:empty{display:none}
+  td.w{min-width:0}
+  tr.sub{margin:-4px 0 8px 14px;border-style:dashed;background:var(--hd)}
+  tr.sub td{background:none}
+  tr.op{padding:8px 12px}
+  tfoot tr{background:var(--hd);padding:8px 0}
+  tfoot td[colspan]{font-size:13px}
+  tfoot td{justify-content:space-between}
+  .chart{height:150px}
+}
+@media print{header button,.bar,#drop,.tabs{display:none}body{background:#fff;color:#000}}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>💰 Báo cáo công nợ</h1><div class="sub" id="info">Chưa mở database</div></div>
+  <div>
+    <button class="hide" id="bCsv">⬇ Xuất CSV</button>
+    <button class="hide" id="bPrint">🖨 In</button>
+    <button id="bReload" type="button">🔄 Tải dữ liệu mới</button>
+    <label class="btn p">📂 Mở garage.db<input type="file" id="file" hidden></label>
+  </div>
+</header>
+<main>
+  <div id="err" class="err hide"></div>
+  <div id="drop"><b>Kéo thả file garage.db vào đây</b>hoặc bấm “Mở garage.db”. Dữ liệu chỉ được đọc trên máy bạn, không tải lên đâu cả.</div>
+  <div class="tabs hide" id="tabs">
+    <button class="on" data-t="rep">💰 Công nợ</button>
+    <button data-t="cash">📒 Sổ quỹ</button>
+    <button data-t="profit">📈 Lợi nhuận</button>
+  </div>
+  <div id="rep" class="hide">
+    <div class="cards">
+      <div class="c"><small>Tổng công nợ</small><div class="debt" id="kTotal">0</div></div>
+      <div class="c"><small>Số khách đang nợ</small><div id="kCus">0</div></div>
+      <div class="c"><small>Số đơn còn nợ</small><div id="kOrd">0</div></div>
+      <div class="c"><small>Nợ lâu nhất</small><div id="kOld">0 ngày</div></div>
+    </div>
+    <div class="bar">
+      <select id="sortSel" class="mo">
+        <option value="debt">Sắp xếp: Nợ nhiều nhất</option><option value="days">Sắp xếp: Nợ lâu nhất</option>
+        <option value="cnt">Sắp xếp: Nhiều đơn nhất</option><option value="name">Sắp xếp: Tên A-Z</option>
+      </select>
+      <input type="search" id="q" placeholder="Tìm tên, SĐT, biển số...">
+      <select id="age">
+        <option value="0">Mọi thời gian nợ</option>
+        <option value="30">Nợ trên 30 ngày</option>
+        <option value="60">Nợ trên 60 ngày</option>
+        <option value="90">Nợ trên 90 ngày</option>
+      </select>
+      <input type="number" id="min" placeholder="Nợ tối thiểu (đ)" min="0">
+    </div>
+    <div class="tw"><table>
+      <thead><tr>
+        <th data-k="name">Khách hàng</th><th data-k="phone">SĐT</th><th data-k="plates">Biển số</th>
+        <th data-k="cnt" class="n">Số đơn</th><th data-k="days" class="n">Nợ lâu nhất</th>
+        <th data-k="debt" class="n">Tổng nợ</th>
+      </tr></thead>
+      <tbody id="tb"></tbody>
+      <tfoot><tr><td colspan="5">Tổng cộng (theo bộ lọc)</td><td class="n debt" id="fTotal">0</td></tr></tfoot>
+    </table></div>
+    <p class="sub">Bấm vào một khách hàng để xem chi tiết các đơn đang nợ.</p>
+  </div>
+  <div id="profit" class="hide">
+    <div class="cards">
+      <div class="c"><small>Doanh thu</small><div id="pRev">0</div></div>
+      <div class="c"><small>Giá vốn</small><div id="pCost">0</div></div>
+      <div class="c"><small>Lợi nhuận thực thu</small><div id="pProf">0</div></div>
+      <div class="c"><small>Lợi nhuận dự kiến (nếu thu đủ nợ)</small><div id="pExp">0</div></div>
+      <div class="c"><small>Tỷ suất lợi nhuận dự kiến</small><div id="pPct">0%</div></div>
+      <div class="c"><small>Số đơn · TB lợi nhuận/đơn</small><div id="pCnt">0</div></div>
+    </div>
+    <div class="bar">
+      <select id="pg"><option value="day">Theo ngày</option><option value="month" selected>Theo tháng</option><option value="year">Theo năm</option></select>
+      <label>Từ <input type="date" id="pf"></label>
+      <label>Đến <input type="date" id="pt"></label>
+    </div>
+    <div class="chart" id="pChart"></div>
+    <div class="tw"><table>
+      <thead><tr><th>Kỳ</th><th class="n">Số đơn</th><th class="n">Doanh thu</th><th class="n">Giá vốn</th>
+      <th class="n">Đã thu</th><th class="n">Còn nợ</th><th class="n">LN thực thu</th><th class="n">LN dự kiến</th></tr></thead>
+      <tbody id="pb"></tbody>
+    </table></div>
+    <p class="sub">Lợi nhuận thực thu = số tiền đã thu − giá vốn (đúng cách tính trong app). Lợi nhuận dự kiến = doanh thu − giá vốn, tức khi khách trả hết nợ. Thống kê theo ngày lập đơn.</p>
+  </div>
+  <div id="cash" class="hide">
+    <div class="cards">
+      <div class="c"><small>Tồn quỹ hiện tại</small><div id="cBal">0</div></div>
+      <div class="c"><small>Tổng thu (theo bộ lọc)</small><div class="thu" id="cIn">0</div></div>
+      <div class="c"><small>Tổng chi (theo bộ lọc)</small><div class="chi" id="cOut">0</div></div>
+      <div class="c"><small>Chi chuyển khoản</small><div id="cTf">0</div></div>
+    </div>
+    <div class="bar">
+      <input type="search" id="cq" placeholder="Tìm mã phiếu, nội dung, ghi chú...">
+      <select id="ct"><option value="">Thu &amp; Chi</option><option value="thu">Chỉ phiếu thu</option><option value="chi">Chỉ phiếu chi</option></select>
+      <label>Từ <input type="date" id="cf"></label>
+      <label>Đến <input type="date" id="cto"></label>
+      <label><input type="checkbox" id="cx" checked> Hiện phiếu đã hủy</label>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>Ngày giờ</th><th>Mã phiếu</th><th>Loại</th><th>Nội dung</th><th>Đơn</th>
+      <th class="n">Thu</th><th class="n">Chi</th><th class="n">Tồn quỹ</th></tr></thead>
+      <tbody id="cb"></tbody>
+    </table></div>
+    <p class="sub">Tồn quỹ là số dư lũy kế thực tế từ phiếu đầu tiên (không tính phiếu đã hủy), nên không bị về 0 khi lọc theo ngày.</p>
+  </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const fmt = n => Math.round(n || 0).toLocaleString('vi-VN') + 'đ';
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+// app_GARA_2.html và garage.db nằm cùng thư mục trên máy chủ.
+// Dùng đường dẫn tương đối để khi cập nhật thư mục/repository không phải sửa URL.
+const DB_URL = new URL('./garage.db', window.location.href).href;
+let SQL, customers = [], sortK = 'debt', sortDir = -1, open = new Set();
+
+function showErr(m){ const e = $('err'); e.textContent = m; e.classList.toggle('hide', !m); }
+
+async function loadDb(file){
+  showErr('');
+  try{
+    if(!SQL) SQL = await initSqlJs({locateFile: f => 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/' + f});
+    const db = new SQL.Database(new Uint8Array(await file.arrayBuffer()));
+    const res = db.exec(`SELECT order_id, date, time, customer_name, customer_phone, car_plate,
+                         car_brand, car_model, revenue, paid_amount, debt
+                         FROM orders WHERE debt > 0 ORDER BY date, order_id`);
+    const rows = res.length ? res[0].values : [];
+    try{
+      const pr = db.exec(`SELECT date, cost, revenue, paid_amount, debt, profit FROM orders ORDER BY date`);
+      allOrders = pr.length ? pr[0].values.map(([date, cost, revenue, paid, debt, profit]) =>
+        ({date: date || '', cost: cost || 0, revenue: revenue || 0, paid: paid || 0, debt: debt || 0, profit: profit || 0})) : [];
+    }catch(e){ allOrders = []; showErr('Không đọc được dữ liệu lợi nhuận: ' + e.message); }
+    try{
+      const cr = db.exec(`SELECT code, date, time, type, amount, description, note, order_id, cancelled, cancel_reason
+                          FROM cash_entries ORDER BY date, time, code`);
+      buildCash(cr.length ? cr[0].values : []);
+    }catch(e){ buildCash([]); showErr('Không đọc được bảng cash_entries (sổ quỹ): ' + e.message); }
+    db.close();
+    build(rows);
+    $('info').textContent = `${file.name} · cập nhật lúc ${new Date().toLocaleTimeString('vi-VN')}`;
+    ['drop'].forEach(i => $(i).classList.add('hide'));
+    ['bCsv','bPrint','tabs'].forEach(i => $(i).classList.remove('hide'));
+    showTab(tab);
+  }catch(e){
+    showErr('Không đọc được database: ' + e.message + '. Hãy chọn đúng file garage.db của phần mềm.');
+  }
+}
+
+async function loadRemoteDb(){
+  const btn = $('bReload');
+  btn.disabled = true;
+  btn.textContent = '⏳ Đang tải...';
+  showErr('');
+  try{
+    const response = await fetch(DB_URL + '?t=' + Date.now(), {cache: 'no-store'});
+    if(!response.ok) throw new Error('GitHub trả về HTTP ' + response.status);
+    const blob = await response.blob();
+    if(!blob.size) throw new Error('File garage.db tải về đang rỗng');
+    const file = new File([blob], 'garage.db', {type: 'application/octet-stream'});
+    await loadDb(file);
+    $('info').textContent = 'GitHub · garage.db · ' + (blob.size / 1024 / 1024).toFixed(2) + ' MB · tải lúc ' + new Date().toLocaleTimeString('vi-VN');
+  }catch(e){
+    showErr('Không tải được database từ GitHub: ' + e.message + '. Kiểm tra Internet, quyền Public của repository và link garage.db. Bạn vẫn có thể chọn file garage.db thủ công.');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = '🔄 Tải dữ liệu mới';
+  }
+}
+
+function build(rows){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const map = {};
+  for(const r of rows){
+    const [id, date, time, name, phone, plate, brand, model, revenue, paid, debt] = r;
+    const key = phone || name || ('#' + id);
+    const c = map[key] ||= {name: name || 'Khách lẻ', phone: phone || '', plates: new Set(), cnt: 0, debt: 0, days: 0, orders: []};
+    const d = Math.max(0, Math.floor((today - new Date(date)) / 864e5)) || 0;
+    if(plate) c.plates.add(plate);
+    c.cnt++; c.debt += debt; c.days = Math.max(c.days, d);
+    c.orders.push({id, date, time, plate, car: [brand, model].filter(Boolean).join(' '), revenue, paid, debt, days: d});
+  }
+  customers = Object.values(map).map(c => ({...c, plates: [...c.plates].join(', ')}));
+  render();
+}
+
+let cash = [], tab = 'rep', allOrders = [], pRows = [];
+function renderProfit(){
+  const f = $('pf').value, to = $('pt').value, g = $('pg').value;
+  const len = g === 'day' ? 10 : g === 'month' ? 7 : 4;
+  const T = {cnt: 0, rev: 0, cost: 0, paid: 0, debt: 0, prof: 0, exp: 0}, by = {};
+  for(const o of allOrders){
+    if((f && o.date < f) || (to && o.date > to)) continue;
+    const k = o.date.slice(0, len) || 'Không rõ';
+    const r = by[k] ||= {k, cnt: 0, rev: 0, cost: 0, paid: 0, debt: 0, prof: 0, exp: 0};
+    for(const x of [r, T]){
+      x.cnt++; x.rev += o.revenue; x.cost += o.cost; x.paid += o.paid; x.debt += o.debt;
+      x.prof += o.profit; x.exp += o.revenue - o.cost;
+    }
+  }
+  pRows = Object.values(by).sort((a, b) => a.k.localeCompare(b.k));
+  $('pRev').textContent = fmt(T.rev); $('pCost').textContent = fmt(T.cost);
+  $('pProf').textContent = fmt(T.prof); $('pProf').className = T.prof < 0 ? 'chi' : 'thu';
+  $('pExp').textContent = fmt(T.exp);
+  $('pPct').textContent = (T.rev ? (T.exp / T.rev * 100).toFixed(1) : 0) + '%';
+  $('pCnt').textContent = T.cnt + ' · ' + fmt(T.cnt ? T.prof / T.cnt : 0);
+  const shown = pRows.slice(-36), max = Math.max(1, ...shown.map(r => Math.abs(r.prof)));
+  $('pChart').innerHTML = shown.map(r => {
+    const h = Math.abs(r.prof) / max * 100, neg = r.prof < 0;
+    return `<div class="col" title="${esc(r.k)}: ${fmt(r.prof)}"><div class="pos">${neg ? '' : `<i style="height:${h}%"></i>`}</div>
+      <div class="neg">${neg ? `<i style="height:${h}%"></i>` : ''}</div><span>${esc(g === 'day' ? r.k.slice(5) : r.k)}</span></div>`;
+  }).join('') || '<span class="sub">Không có dữ liệu</span>';
+  $('pb').innerHTML = [...pRows].reverse().map(r => `<tr><td><b>${esc(r.k)}</b></td><td class="n">${r.cnt}</td>
+    <td class="n">${fmt(r.rev)}</td><td class="n">${fmt(r.cost)}</td><td class="n">${fmt(r.paid)}</td>
+    <td class="n ${r.debt > 0 ? 'debt' : ''}">${fmt(r.debt)}</td>
+    <td class="n ${r.prof < 0 ? 'chi' : 'thu'}">${fmt(r.prof)}</td><td class="n">${fmt(r.exp)}</td></tr>`).join('')
+    || '<tr><td colspan="8" style="text-align:center;color:var(--mu);padding:30px">Không có đơn hàng phù hợp</td></tr>';
+}
+function showTab(t){
+  tab = t;
+  $('rep').classList.toggle('hide', t !== 'rep');
+  $('cash').classList.toggle('hide', t !== 'cash');
+  $('profit').classList.toggle('hide', t !== 'profit');
+  if(t === 'profit') renderProfit();
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  if(t === 'cash') renderCash();
+}
+function buildCash(rows){
+  let bal = 0;
+  cash = rows.map(r => {
+    const [code, date, time, type, amount, desc, note, oid, canc, why] = r;
+    const e = {code, date, time: time || '', type, amount: amount || 0, desc: desc || '', note: note || '', oid, canc: !!canc, why: why || ''};
+    if(!e.canc) bal += e.type === 'thu' ? e.amount : -e.amount;
+    e.bal = bal;
+    return e;
+  });
+}
+function cashFiltered(){
+  const q = $('cq').value.trim().toLowerCase(), t = $('ct').value, f = $('cf').value, to = $('cto').value, x = $('cx').checked;
+  return cash.filter(e =>
+    (!t || e.type === t) && (!f || e.date >= f) && (!to || e.date <= to) && (x || !e.canc) &&
+    (!q || (e.code + ' ' + e.desc + ' ' + e.note).toLowerCase().includes(q)));
+}
+function renderCash(){
+  const list = cashFiltered(), f = $('cf').value;
+  let tin = 0, tout = 0, tf = 0;
+  for(const e of list){
+    if(e.canc) continue;
+    if(e.type === 'thu') tin += e.amount;
+    else { tout += e.amount; if(/chuyển khoản|chuyen khoan/i.test(e.desc)) tf += e.amount; }
+  }
+  const bal = cash.length ? cash[cash.length - 1].bal : 0;
+  $('cBal').textContent = fmt(bal);
+  $('cBal').className = bal < 0 ? 'chi' : 'thu';
+  $('cIn').textContent = fmt(tin); $('cOut').textContent = fmt(tout); $('cTf').textContent = fmt(tf);
+  let h = '';
+  if(f){
+    const prev = cash.filter(e => e.date < f).pop();
+    h += `<tr class="op"><td colspan="7">Tồn đầu kỳ (trước ${esc(f)})</td><td class="n">${fmt(prev ? prev.bal : 0)}</td></tr>`;
+  }
+  for(const e of list){
+    const isIn = e.type === 'thu';
+    h += `<tr class="${e.canc ? 'x' : ''}"><td>${esc(e.date)} ${esc(e.time)}</td><td>${esc(e.code)}</td>
+      <td class="${isIn ? 'thu' : 'chi'}">${isIn ? 'THU' : 'CHI'}</td>
+      <td class="w">${esc(e.desc)}${e.note ? '<br><span class="sub">' + esc(e.note) + '</span>' : ''}${e.canc ? '<br><span class="sub">Đã hủy' + (e.why ? ': ' + esc(e.why) : '') + '</span>' : ''}</td>
+      <td>${e.oid ? '#' + esc(e.oid) : ''}</td>
+      <td class="n thu">${isIn ? fmt(e.amount) : ''}</td><td class="n chi">${isIn ? '' : fmt(e.amount)}</td>
+      <td class="n"><b>${fmt(e.bal)}</b></td></tr>`;
+  }
+  $('cb').innerHTML = h || '<tr><td colspan="8" style="text-align:center;color:var(--mu);padding:30px">Không có giao dịch phù hợp</td></tr>';
+}
+
+function tagFor(d){ return d > 60 ? 't3' : d > 30 ? 't2' : 't1'; }
+
+function filtered(){
+  const q = $('q').value.trim().toLowerCase(), age = +$('age').value, min = +$('min').value || 0;
+  return customers.filter(c =>
+    c.debt >= min && c.days >= age &&
+    (!q || (c.name + ' ' + c.phone + ' ' + c.plates).toLowerCase().includes(q))
+  ).sort((a, b) => {
+    const x = a[sortK], y = b[sortK];
+    return (typeof x === 'number' ? x - y : String(x).localeCompare(String(y), 'vi')) * sortDir;
+  });
+}
+
+function render(){
+  const list = filtered();
+  $('kTotal').textContent = fmt(customers.reduce((s, c) => s + c.debt, 0));
+  $('kCus').textContent = customers.length;
+  $('kOrd').textContent = customers.reduce((s, c) => s + c.cnt, 0);
+  $('kOld').textContent = Math.max(0, ...customers.map(c => c.days)) + ' ngày';
+  $('fTotal').textContent = fmt(list.reduce((s, c) => s + c.debt, 0));
+  let h = '';
+  for(const c of list){
+    const k = c.phone || c.name;
+    h += `<tr class="cu" data-k="${esc(k)}"><td>${open.has(k) ? '▾' : '▸'} <b>${esc(c.name)}</b></td>
+      <td>${esc(c.phone)}</td><td>${esc(c.plates)}</td><td class="n">${c.cnt}</td>
+      <td class="n"><span class="tag ${tagFor(c.days)}">${c.days} ngày</span></td>
+      <td class="n debt">${fmt(c.debt)}</td></tr>`;
+    if(open.has(k)){
+      h += `<tr class="sub"><th>Mã đơn / Ngày</th><th>Xe</th><th>Biển số</th><th class="n">Doanh thu</th><th class="n">Đã trả</th><th class="n">Còn nợ</th></tr>`;
+      for(const o of c.orders)
+        h += `<tr class="sub"><td>#${o.id} · ${esc(o.date)} ${esc(o.time || '')}</td><td>${esc(o.car)}</td><td>${esc(o.plate)}</td>
+          <td class="n">${fmt(o.revenue)}</td><td class="n">${fmt(o.paid)}</td><td class="n debt">${fmt(o.debt)}</td></tr>`;
+    }
+  }
+  $('tb').innerHTML = h || '<tr><td colspan="6" style="text-align:center;color:var(--mu);padding:30px">Không có công nợ phù hợp 🎉</td></tr>';
+}
+
+function exportCsv(){
+  let lines, name;
+  if(tab === 'profit'){
+    name = 'loi-nhuan';
+    lines = [['Kỳ','Số đơn','Doanh thu','Giá vốn','Đã thu','Còn nợ','LN thực thu','LN dự kiến']];
+    for(const r of pRows) lines.push([r.k, r.cnt, r.rev, r.cost, r.paid, r.debt, r.prof, r.exp]);
+  }else if(tab === 'cash'){
+    name = 'so-quy';
+    lines = [['Ngày','Giờ','Mã phiếu','Loại','Nội dung','Ghi chú','Mã đơn','Số tiền','Trạng thái','Tồn quỹ']];
+    for(const e of cashFiltered())
+      lines.push([e.date, e.time, e.code, e.type === 'thu' ? 'THU' : 'CHI', e.desc, e.note, e.oid || '', e.amount, e.canc ? 'Đã hủy' : '', e.bal]);
+  }else{
+    name = 'cong-no';
+    lines = [['Khách hàng','SĐT','Biển số','Mã đơn','Ngày','Doanh thu','Đã trả','Còn nợ']];
+    for(const c of filtered()) for(const o of c.orders)
+      lines.push([c.name, c.phone, o.plate, o.id, o.date, o.revenue, o.paid, o.debt]);
+  }
+  const csv = '\ufeff' + lines.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv;charset=utf-8'}));
+  a.download = name + '-' + new Date().toISOString().slice(0, 10) + '.csv';
+  a.click();
+}
+
+const LAB = {
+  tb: ['', 'SĐT', 'Biển số', 'Số đơn', 'Nợ lâu nhất', 'Tổng nợ'],
+  tbSub: ['', 'Xe', 'Biển số', 'Doanh thu', 'Đã trả', 'Còn nợ'],
+  cb: ['Ngày giờ', 'Mã phiếu', 'Loại', 'Nội dung', 'Đơn', 'Thu', 'Chi', 'Tồn quỹ'],
+  pb: ['', 'Số đơn', 'Doanh thu', 'Giá vốn', 'Đã thu', 'Còn nợ', 'LN thực thu', 'LN dự kiến']
+};
+function labelize(id){
+  document.querySelectorAll('#' + id + ' tr').forEach(tr => {
+    if(tr.querySelector('th')){ tr.classList.add('mh'); return; }
+    const L = id === 'tb' && tr.classList.contains('sub') ? LAB.tbSub : LAB[id];
+    [...tr.children].forEach((td, i) => {
+      if(td.colSpan > 1) return;
+      td.dataset.label = i === 0 ? '' : (L[i] || '');
+    });
+  });
+}
+['tb', 'cb', 'pb'].forEach(id => new MutationObserver(() => labelize(id)).observe($(id), {childList: true}));
+$('sortSel').onchange = e => { sortK = e.target.value; sortDir = sortK === 'name' ? 1 : -1; render(); };
+$('file').onchange = e => e.target.files[0] && loadDb(e.target.files[0]);
+$('bReload').onclick = loadRemoteDb;
+['dragover','dragleave','drop'].forEach(t => document.addEventListener(t, e => {
+  e.preventDefault();
+  $('drop').classList.toggle('over', t === 'dragover');
+  if(t === 'drop' && e.dataTransfer.files[0]) loadDb(e.dataTransfer.files[0]);
+}));
+['q','age','min'].forEach(i => $(i).oninput = render);
+['pg','pf','pt'].forEach(i => $(i).oninput = renderProfit);
+['cq','ct','cf','cto','cx'].forEach(i => $(i).oninput = renderCash);
+document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => showTab(b.dataset.t));
+$('bCsv').onclick = exportCsv;
+$('bPrint').onclick = () => { if(tab === 'rep'){ customers.forEach(c => open.add(c.phone || c.name)); render(); } print(); };
+window.addEventListener('load', () => loadRemoteDb());
+$('tb').onclick = e => {
+  const tr = e.target.closest('tr.cu'); if(!tr) return;
+  const k = tr.dataset.k; open.has(k) ? open.delete(k) : open.add(k); render();
+};
+document.querySelector('thead').onclick = e => {
+  const k = e.target.closest('th')?.dataset.k; if(!k) return;
+  sortDir = sortK === k ? -sortDir : (k === 'name' ? 1 : -1); sortK = k; render();
+};
+</script>
+</body>
+</html>
